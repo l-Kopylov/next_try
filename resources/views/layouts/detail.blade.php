@@ -1,5 +1,5 @@
 @extends('layouts.base')
-@section('title', $bb->title)
+@section('title', $bb->title, )
 @section('main')
     <h2>{{ $bb->title }}</h2>
     <p>{{ $bb->content }}</p>
