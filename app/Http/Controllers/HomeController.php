@@ -9,11 +9,18 @@ use App\Http\Controllers\BbsController;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    private const BB_VALIDATOR = [
+        'title' => 'required|max:50',
+        'content' => 'required',
+        'price' => 'required|numeric'
+    ];
+
+    private const BB_ERROR_MESSAGES = [
+        'price.required' => 'Раздавать товары бесплатно нельзя',
+        'required' => 'Заполните это поле',
+        'max' => 'Значение не должно быть длиннее :max символов',
+        'numeric' => 'Введите число'
+    ];
     public function __construct()
     {
         $this->middleware('auth');
@@ -33,18 +40,22 @@ class HomeController extends Controller
         return view('bb_add');
     }
     public function storeBb(Request $request) {
-        Auth::user()->bbs()->create(['title' => $request->title,
-            'content' => $request->content,
-            'price' => $request->price]);
+        $validated = $request->validate(self::BB_VALIDATOR,
+            self::BB_ERROR_MESSAGES);
+        Auth::user()->bbs()->create(['title' => $validated['title'],
+            'content' => $validated['content'],
+            'price' => $validated['price']]);
         return redirect()->route('home');
     }
     public function showEditBbForm(Bb $bb) {
         return view('bb_edit', ['bb' => $bb]);
     }
     public function updateBb(Request $request, Bb $bb) {
-        $bb->fill(['title' => $request->title,
-            'content' => $request->content,
-            'price' => $request->price]);
+        $validated = $request->validate(self::BB_VALIDATOR,
+            self::BB_ERROR_MESSAGES);
+        $bb->fill(['title' => $validated['title'],
+            'content' => $validated['content'],
+            'price' => $validated['price']]);
         $bb->save();
         return redirect()->route('home');
     }
@@ -55,4 +66,5 @@ class HomeController extends Controller
         $bb->delete();
         return redirect()->route('home');
     }
+
 }
