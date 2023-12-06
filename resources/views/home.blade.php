@@ -3,6 +3,7 @@
 
 
 @section('main')
+    <h2>Добро пожаловать, {{ Auth::user()->name }}!</h2>
     <p class="text-right"><a href="{{ route('bb.add') }}">Добавить объявление</a></p>
     @if (count($bbs) > 0)
         <table class="table table-striped">
